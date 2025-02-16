@@ -1,36 +1,26 @@
 package com.lacakio.suggestion.service.implementation;
 
-import com.lacakio.suggestion.dto.response.SuggestionResponse;
 import com.lacakio.suggestion.entity.City;
 import com.lacakio.suggestion.entity.Suggestion;
+import com.lacakio.suggestion.service.FileReaderService;
 import com.lacakio.suggestion.service.SuggestionService;
-import org.springframework.core.io.ClassPathResource;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.lacakio.suggestion.constant.Index.*;
-
-
 @Service
+@RequiredArgsConstructor
 public class SuggestionServiceImpl implements SuggestionService {
-    private ClassPathResource resource = new ClassPathResource("data/cities_canada-usa.tsv");
-
-    private List<City> cities = new ArrayList<>();
-
-    public SuggestionServiceImpl() {
-        loadData();
-    }
+    private final FileReaderService fileReaderService;
 
     @Override
-    public SuggestionResponse findSuggestion(String query, Double latitude, Double longitude) {
+    public List<Suggestion> findSuggestion(String query, Double latitude, Double longitude) {
 
         // Normalize the query for case-insensitive matching
+        List<City> cities = fileReaderService.getListOfCities();
         String normalizedQuery = query.toLowerCase();
 
         List<Suggestion> suggestions = cities.stream()
@@ -63,33 +53,7 @@ public class SuggestionServiceImpl implements SuggestionService {
                 .sorted(Comparator.comparing(Suggestion::getScore).reversed())
                 .collect(Collectors.toList());
 
-        SuggestionResponse response = new SuggestionResponse();
-        response.setSuggestions(suggestions);
-        return response;
-    }
-
-    private void loadData() {
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(resource.getInputStream())))  {
-
-            String line = br.readLine();
-            while ((line = br.readLine()) != null) {
-                String[] records = line.split("\t");
-
-                City city = new City();
-                city.setId(records[ID]);
-                city.setName(records[NAME]);
-                city.setAscii(records[ASCII]);
-                city.setAltName(records[ALT_NAME]);
-                city.setLatitude(Double.parseDouble(records[LAT]));
-                city.setLongitude(Double.parseDouble(records[LONG]));
-                city.setAdmin1(records[ADMIN1]);
-                city.setCountry(records[COUNTRY]);
-
-                cities.add(city);
-            }
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to load city data", e);
-        }
+        return suggestions;
     }
 
     // A simple scoring function based on name match
