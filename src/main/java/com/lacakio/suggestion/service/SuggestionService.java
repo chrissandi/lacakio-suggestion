@@ -1,7 +1,9 @@
 package com.lacakio.suggestion.service;
 
-import com.lacakio.suggestion.dto.response.SuggestionResponse;
+import com.lacakio.suggestion.entity.Suggestion;
+
+import java.util.List;
 
 public interface SuggestionService {
-    SuggestionResponse findSuggestion(String query, Double latitude, Double longitude);
+    List<Suggestion> findSuggestion(String query, Double latitude, Double longitude);
 }

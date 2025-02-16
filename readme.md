@@ -43,13 +43,16 @@ GET /suggestions?q=Londo&latitude=43.70011&longitude=-79.4163
 - Java 21
 - Spring Boot 3.4.2
 - Gradle
+- Docker
+- AWS EC2 (Ubuntu)
 
 ## Setup & Installation
 
 ### 1. Clone the Repository
 
 ```sh
-git clone https://github.com/chrissandi/lacakio-suggestion.git
+git clone https://github.com/your-username/your-repo.git
+cd your-repo
 ```
 
 ### 2. Build the Application
@@ -63,3 +66,13 @@ git clone https://github.com/chrissandi/lacakio-suggestion.git
 ```sh
 ./gradlew bootRun
 ```
+
+## Test API
+
+Visit:
+
+```
+[SuggestionApp](http://ec2-13-250-126-26.ap-southeast-1.compute.amazonaws.com:8080/api/v1/suggestions?q=London&latitude=43.70011&longitude=-79.4163)
+```
+
+
